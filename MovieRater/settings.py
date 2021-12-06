@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "corsheaders",
-    'mod_wsgi.server',
 ]
 
 MIDDLEWARE = [

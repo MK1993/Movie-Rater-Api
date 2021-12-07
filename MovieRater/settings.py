@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import django_heroku
 from decouple import config
 import dj_database_url
 
@@ -133,5 +134,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
 
-import django_heroku
+# Activate Django-Heroku.
 django_heroku.settings(locals())

@@ -12,19 +12,20 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-import django_heroku
+from decouple import config
+from dj_database_url import parse as dburl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mk-movie-rater.herokuapp.com']
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'change-in-production')
-DEBUG = True
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Application definition
 
@@ -77,11 +78,11 @@ WSGI_APPLICATION = 'MovieRater.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+default_dburl = 'sqlite:///' + os.path.join(BASE_DIR,'db.sqlite3')
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
-    }
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
 }
 
 # Password validation
@@ -137,10 +138,3 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
-
-django_heroku.settings(locals(), staticfiles=False, allowed_hosts=False)
-
-if "DYNO" in os.environ:
-    STATIC_ROOT = 'static'
-    ALLOWED_HOSTS = ['quiet-lake-37463.herokuapp.com']
-    DEBUG = False

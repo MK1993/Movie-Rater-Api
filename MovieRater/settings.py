@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,8 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = []
 
-SECRET_KEY = 'django-insecure-=nz8)63$i)9dtk622*6jmb__jf+oiuz5o(f^6j(+7#n^u@pap-'
-DEBUG = False
+# SECRET_KEY = 'django-insecure-=nz8)63$i)9dtk622*6jmb__jf+oiuz5o(f^6j(+7#n^u@pap-'
+SECRET_KEY = os.getenv('SECRET_KEY', 'change-in-production')
+DEBUG = True
 
 # Application definition
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -120,7 +121,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
@@ -138,5 +138,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False, allowed_hosts=False)
+
+if "DYNO" in os.environ:
+    STATIC_ROOT = 'static'
+    ALLOWED_HOSTS = ['quiet-lake-37463.herokuapp.com']
+    DEBUG = False
